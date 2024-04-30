@@ -8363,9 +8363,10 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
 
         _enterPrevent(e) {
             e.preventDefault();
-            if (!util.isMobile) return;
+            if (!util.isMobile || !util.isOSX_IOS) return;  //ios에서 한글 입력 버그가 있으므로 focus처리가 필요
 
             core.__focusTemp.focus();
+            core.focus();
         },
 
         _onMouseDown_lineBreak: function (e) {
