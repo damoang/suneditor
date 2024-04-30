@@ -7572,31 +7572,31 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
 
                         // set format attrs - edge
                         if (range.collapsed && (formatStartEdge || formatEndEdge)) {
-                            event._enterPrevent(e);
+                            //event._enterPrevent(e);
                             if(anchorme) {
-                                formatEl.innerHTML = anchorme(formatEl.innerHTML)
+                                formatEl.innerHTML = anchorme({input: formatEl.innerHTML, options: { attributes: { target: "_blank"}}});
                             }
+                            core.setRange(formatEl, 1, formatEl, 1);
                             
-                            const focusBR = util.createElement('BR');
-                            const newFormat = util.createElement(formatEl.nodeName);
-                            formatEl.innerHTML = anchorme(formatEl.innerHTML)
-                            util.copyTagAttributes(newFormat, formatEl, options.lineAttrReset);
+                            // const focusBR = util.createElement('BR');
+                            // const newFormat = util.createElement(formatEl.nodeName);
+                            // util.copyTagAttributes(newFormat, formatEl, options.lineAttrReset);
 
-                            let child = focusBR;
-                            do {
-                                if (!util.isBreak(selectionNode) && selectionNode.nodeType === 1) {
-                                    const f = selectionNode.cloneNode(false);
-                                    f.appendChild(child);
-                                    child = f;
-                                }
-                                selectionNode = selectionNode.parentNode;
-                            } while(formatEl !== selectionNode && formatEl.contains(selectionNode));
+                            // let child = focusBR;
+                            // do {
+                            //     if (!util.isBreak(selectionNode) && selectionNode.nodeType === 1) {
+                            //         const f = selectionNode.cloneNode(false);
+                            //         f.appendChild(child);
+                            //         child = f;
+                            //     }
+                            //     selectionNode = selectionNode.parentNode;
+                            // } while(formatEl !== selectionNode && formatEl.contains(selectionNode));
 
-                            newFormat.appendChild(child);
-                            formatEl.parentNode.insertBefore(newFormat, formatStartEdge && !formatEndEdge ? formatEl : formatEl.nextElementSibling);
-                            if (formatEndEdge) {
-                                core.setRange(focusBR, 1, focusBR, 1);
-                            }
+                            // newFormat.appendChild(child);
+                            // formatEl.parentNode.insertBefore(newFormat, formatStartEdge && !formatEndEdge ? formatEl : formatEl.nextElementSibling);
+                            // if (formatEndEdge) {
+                            //     core.setRange(focusBR, 1, focusBR, 1);
+                            // }
                             break;
                         }
 
@@ -9058,6 +9058,7 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
 
             if (typeof html === 'string') {
                 if (!notCleaningData) html = core.cleanHTML(html, null, null);
+                if(anchorme) html = anchorme({input: html, options: { attributes: { target: "_blank"}}});
                 try {
                     if (util.isListCell(util.getFormatElement(core.getSelectionNode(), null))) {
                         const dom = _d.createRange().createContextualFragment(html);
@@ -9089,10 +9090,11 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                         if (!firstCon) firstCon = t;
                         prev = c;
                     }
-
+                    
                     if (prev.nodeType === 3 && a.nodeType === 1) a = prev;
                     const offset = a.nodeType === 3 ? (t.endOffset || a.textContent.length): a.childNodes.length;
                     if (rangeSelection) core.setRange(firstCon.container || firstCon, firstCon.startOffset || 0, a, offset);
+                    else if(a.nodeType === 1 && a.nextSibling) core.setRange(a.nextSibling, a.nextSibling.length, a.nextSibling, a.nextSibling.length);
                     else core.setRange(a, offset, a, offset);
                 } catch (error) {
                     if (core.isDisabled || core.isReadOnly) return;
