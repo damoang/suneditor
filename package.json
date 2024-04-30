@@ -67,5 +67,8 @@
     "contenteditable",
     "javascript",
     "vanillajs"
-  ]
+  ],
+  "dependencies": {
+    "anchorme": "^3.0.8"
+  }
 }

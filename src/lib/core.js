@@ -12,6 +12,7 @@ import _Context from './context';
 import _history from './history';
 import _util from './util';
 import _notice from '../plugins/modules/_notice';
+import anchorme from "anchorme";
 
 /**
  * @description SunEditor constuctor function.
@@ -7572,8 +7573,13 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                         // set format attrs - edge
                         if (range.collapsed && (formatStartEdge || formatEndEdge)) {
                             event._enterPrevent(e);
+                            if(anchorme) {
+                                formatEl.innerHTML = anchorme(formatEl.innerHTML)
+                            }
+                            
                             const focusBR = util.createElement('BR');
                             const newFormat = util.createElement(formatEl.nodeName);
+                            formatEl.innerHTML = anchorme(formatEl.innerHTML)
                             util.copyTagAttributes(newFormat, formatEl, options.lineAttrReset);
 
                             let child = focusBR;
@@ -7591,7 +7597,6 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                             if (formatEndEdge) {
                                 core.setRange(focusBR, 1, focusBR, 1);
                             }
-
                             break;
                         }
 
