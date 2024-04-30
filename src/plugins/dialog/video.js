@@ -828,11 +828,11 @@ export default {
         w = w ? w + contextVideo.sizeUnit : '';
 
         if (!onlyH) contextVideo._element.style.width = w;
-        if (!onlyW) contextVideo._cover.style.paddingBottom = contextVideo._cover.style.height = h;
+        if (!onlyW && contextVideo._cover) contextVideo._cover.style.paddingBottom = contextVideo._cover.style.height = h;
 
         if (!onlyH && !/%$/.test(w)) {
-            contextVideo._cover.style.width = w;
-            contextVideo._container.style.width = '';
+            if(contextVideo._cover) contextVideo._cover.style.width = w;
+            if(contextVideo._container) contextVideo._container.style.width = '';
         }
 
         if (!onlyW && !/%$/.test(h)) {
@@ -888,11 +888,15 @@ export default {
         const contextVideo = this.context.video;
         h = !!h && !/%$/.test(h) && !this.util.getNumber(h, 0) ? this.util.isNumber(h) ? h + '%' : h : this.util.isNumber(h) ? h + contextVideo.sizeUnit : (h || contextVideo._defaultRatio);
 
-        contextVideo._container.style.width = this.util.isNumber(w) ? w + '%' : w;
-        contextVideo._container.style.height = '';
-        contextVideo._cover.style.width = '100%';
-        contextVideo._cover.style.height = h;
-        contextVideo._cover.style.paddingBottom = h;
+        if(contextVideo._container) {
+            contextVideo._container.style.width = this.util.isNumber(w) ? w + '%' : w;
+            contextVideo._container.style.height = '';
+        }
+        if(contextVideo._cover) {
+            contextVideo._cover.style.width = '100%';
+            contextVideo._cover.style.height = h;
+            contextVideo._cover.style.paddingBottom = h;
+        }
         contextVideo._element.style.width = '100%';
         contextVideo._element.style.height = '100%';
         contextVideo._element.style.maxWidth = '';
@@ -910,12 +914,15 @@ export default {
     cancelPercentAttr: function () {
         const contextVideo = this.context.video;
         
-        contextVideo._cover.style.width = '';
-        contextVideo._cover.style.height = '';
-        contextVideo._cover.style.paddingBottom = '';
-        contextVideo._container.style.width = '';
-        contextVideo._container.style.height = '';
-
+        if(contextVideo._cover) {
+            contextVideo._cover.style.width = '';
+            contextVideo._cover.style.height = '';
+            contextVideo._cover.style.paddingBottom = '';
+        }
+        if(contextVideo._container) {
+            contextVideo._container.style.width = '';
+            contextVideo._container.style.height = '';
+        }
         this.util.removeClass(contextVideo._container, this.context.video._floatClassRegExp);
         this.util.addClass(contextVideo._container, '__se__float-' + contextVideo._align);
 
@@ -934,14 +941,18 @@ export default {
         if (!container) container = contextVideo._container;
 
         if (/%$/.test(element.style.width) && align === 'center') {
-            container.style.minWidth = '100%';
-            cover.style.width = container.style.width;
-            cover.style.height = cover.style.height;
-            cover.style.paddingBottom = !/%$/.test(cover.style.height) ? cover.style.height : this.util.getNumber((this.util.getNumber(cover.style.height, 2) / 100) * this.util.getNumber(cover.style.width, 2), 2) + '%';
+            if(container) container.style.minWidth = '100%';
+            if(cover) {
+                cover.style.width = container.style.width;
+                cover.style.height = cover.style.height;
+                cover.style.paddingBottom = !/%$/.test(cover.style.height) ? cover.style.height : this.util.getNumber((this.util.getNumber(cover.style.height, 2) / 100) * this.util.getNumber(cover.style.width, 2), 2) + '%';
+            }
         } else {
-            container.style.minWidth = '';
-            cover.style.width = this.context.resizing._rotateVertical ? (element.style.height || element.offsetHeight) : (element.style.width || '100%');
-            cover.style.paddingBottom = cover.style.height;
+            if(container) container.style.minWidth = '';
+            if(cover) {
+                cover.style.width = this.context.resizing._rotateVertical ? (element.style.height || element.offsetHeight) : (element.style.width || '100%');
+                cover.style.paddingBottom = cover.style.height;
+            }
         }
 
         if (!this.util.hasClass(container, '__se__float-' + align)) {
