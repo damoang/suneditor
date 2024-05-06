@@ -7534,7 +7534,7 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
 
                             if (!util.isClosureFreeFormatElement(freeFormatEl) && !!children && ((selectionFormat && range.collapsed && children.length - 1 <= offset + 1 && util.isBreak(children[offset]) && (!children[offset + 1] || ((!children[offset + 2] || util.onlyZeroWidthSpace(children[offset + 2].textContent)) && children[offset + 1].nodeType === 3 && util.onlyZeroWidthSpace(children[offset + 1].textContent))) &&  offset > 0 && util.isBreak(children[offset - 1])) ||
                                 (!selectionFormat && util.onlyZeroWidthSpace(selectionNode.textContent) && util.isBreak(prev) && (util.isBreak(prev.previousSibling) || !util.onlyZeroWidthSpace(prev.previousSibling.textContent)) && (!next || (!util.isBreak(next) && util.onlyZeroWidthSpace(next.textContent)))))) {
-                                if (selectionFormat) util.removeItem(children[offset - 1]);
+                                    if (selectionFormat) util.removeItem(children[offset - 1]);
                                 else util.removeItem(selectionNode);
                                 const newEl = core.appendFormatTag(freeFormatEl, (util.isFormatElement(freeFormatEl.nextElementSibling) && !util.isRangeFormatElement(freeFormatEl.nextElementSibling)) ? freeFormatEl.nextElementSibling : null);
                                 util.copyFormatAttributes(newEl, freeFormatEl);
@@ -7572,31 +7572,33 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
 
                         // set format attrs - edge
                         if (range.collapsed && (formatStartEdge || formatEndEdge)) {
-                            //event._enterPrevent(e);
+                            event._enterPrevent(e);
                             if(anchorme) {
                                 formatEl.innerHTML = anchorme({input: formatEl.innerHTML, options: { attributes: { target: "_blank"}}});
                             }
-                            core.setRange(formatEl, 1, formatEl, 1);
-                            
-                            // const focusBR = util.createElement('BR');
-                            // const newFormat = util.createElement(formatEl.nodeName);
-                            // util.copyTagAttributes(newFormat, formatEl, options.lineAttrReset);
-
-                            // let child = focusBR;
-                            // do {
-                            //     if (!util.isBreak(selectionNode) && selectionNode.nodeType === 1) {
-                            //         const f = selectionNode.cloneNode(false);
-                            //         f.appendChild(child);
-                            //         child = f;
-                            //     }
-                            //     selectionNode = selectionNode.parentNode;
-                            // } while(formatEl !== selectionNode && formatEl.contains(selectionNode));
-
-                            // newFormat.appendChild(child);
-                            // formatEl.parentNode.insertBefore(newFormat, formatStartEdge && !formatEndEdge ? formatEl : formatEl.nextElementSibling);
                             // if (formatEndEdge) {
-                            //     core.setRange(focusBR, 1, focusBR, 1);
+                            // core.setRange(formatEl, 1, formatEl, 1);
                             // }
+                            
+                            const focusBR = util.createElement('BR');
+                            const newFormat = util.createElement(formatEl.nodeName);
+                            util.copyTagAttributes(newFormat, formatEl, options.lineAttrReset);
+
+                            let child = focusBR;
+                            do {
+                                if (!util.isBreak(selectionNode) && selectionNode.nodeType === 1) {
+                                    const f = selectionNode.cloneNode(false);
+                                    f.appendChild(child);
+                                    child = f;
+                                }
+                                selectionNode = selectionNode.parentNode;
+                            } while(formatEl !== selectionNode && formatEl.contains(selectionNode));
+
+                            newFormat.appendChild(child);
+                            formatEl.parentNode.insertBefore(newFormat, formatStartEdge && !formatEndEdge ? formatEl : formatEl.nextElementSibling);
+                            if (formatEndEdge) {
+                                core.setRange(focusBR, 1, focusBR, 1);
+                            }
                             break;
                         }
 
@@ -7692,6 +7694,8 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
 
                         if (shift) container.parentNode.insertBefore(newEl, container);
                         else container.parentNode.insertBefore(newEl, container.nextElementSibling);
+
+                        core.setRange(newEl, 0, newEl, 0);
 
                         core.callPlugin(fileComponentName, function () {
                             if (core.selectComponent(compContext._element, fileComponentName) === false) core.blur();
@@ -9094,7 +9098,9 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                     if (prev.nodeType === 3 && a.nodeType === 1) a = prev;
                     const offset = a.nodeType === 3 ? (t.endOffset || a.textContent.length): a.childNodes.length;
                     if (rangeSelection) core.setRange(firstCon.container || firstCon, firstCon.startOffset || 0, a, offset);
-                    else if(a.nodeType === 1 && a.nextSibling) core.setRange(a.nextSibling, a.nextSibling.length, a.nextSibling, a.nextSibling.length);
+                    else if(a.nodeType === 1 && a.lastChild) {
+                        core.setRange(a.lastChild, a.lastChild.textContent.length, a.lastChild, a.lastChild.textContent.length);
+                    }
                     else core.setRange(a, offset, a, offset);
                 } catch (error) {
                     if (core.isDisabled || core.isReadOnly) return;
