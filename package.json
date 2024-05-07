@@ -69,6 +69,7 @@
     "vanillajs"
   ],
   "dependencies": {
-    "anchorme": "^3.0.8"
+    "anchorme": "^3.0.8",
+    "showdown": "^2.1.0"
   }
 }

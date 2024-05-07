@@ -13,6 +13,7 @@ import _history from './history';
 import _util from './util';
 import _notice from '../plugins/modules/_notice';
 import anchorme from "anchorme";
+import showdown from "showdown";
 
 /**
  * @description SunEditor constuctor function.
@@ -31,7 +32,10 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
     const _w = _d.defaultView || window;
     const util = _util;
     const icons = options.icons;
-
+    const mdConverter = new showdown.Converter({emoji:true, encodeEmails:true, omitExtraWLInCodeBlocks:true, 
+        openLinksInNewWindow:true, simplifiedAutoLink:true, splitAdjacentBlockquotes:true, tables:true, 
+    });
+    mdConverter.setFlavor('github');
     /**
      * @description editor core object
      * should always bind this object when registering an event in the plug-in.
@@ -7573,9 +7577,13 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                         // set format attrs - edge
                         if (range.collapsed && (formatStartEdge || formatEndEdge)) {
                             event._enterPrevent(e);
-                            if(anchorme) {
-                                formatEl.innerHTML = anchorme({input: formatEl.innerHTML, options: { attributes: { target: "_blank"}}});
+                            if(mdConverter) {
+                                formatEl.innerHTML = mdConverter.makeHtml(formatEl.innerHTML).replace(/<\/?p[^>]*>/g, '');
                             }
+                            // if(anchorme) {
+                            //     formatEl.innerHTML = anchorme({input: formatEl.innerHTML, options: { attributes: { target: "_blank"}}});
+                            // }
+                            
                             // if (formatEndEdge) {
                             // core.setRange(formatEl, 1, formatEl, 1);
                             // }
@@ -9063,6 +9071,9 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
             if (typeof html === 'string') {
                 if (!notCleaningData) html = core.cleanHTML(html, null, null);
                 if(anchorme) html = anchorme({input: html, options: { attributes: { target: "_blank"}}});
+                // if(mdConverter) {
+                //     html = mdConverter.makeHtml(html);
+                // }
                 try {
                     if (util.isListCell(util.getFormatElement(core.getSelectionNode(), null))) {
                         const dom = _d.createRange().createContextualFragment(html);
