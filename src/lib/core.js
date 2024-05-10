@@ -7900,7 +7900,7 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
             }
 
             const textKey = !ctrl && !alt && !event._nonTextKeyCode.test(keyCode);
-            if (textKey && selectionNode.nodeType === 3 && util.zeroWidthRegExp.test(selectionNode.textContent) && !(e.isComposing !== undefined ? e.isComposing : event._IEisComposing)) {
+            if (textKey && selectionNode.nodeType === 3 && util.zeroWidthRegExp.test(selectionNode.textContent) && !(e.isComposing !== undefined ? e.isComposing : event._IEisComposing) && !(selectionNode.previousSibling && selectionNode.previousSibling.nodeType === 1)) {
                 let so = range.startOffset, eo = range.endOffset;
                 const frontZeroWidthCnt = (selectionNode.textContent.substring(0, eo).match(event._frontZeroWidthReg) || '').length;
                 so = range.startOffset - frontZeroWidthCnt;
@@ -9109,8 +9109,9 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                     if (prev.nodeType === 3 && a.nodeType === 1) a = prev;
                     const offset = a.nodeType === 3 ? (t.endOffset || a.textContent.length): a.childNodes.length;
                     if (rangeSelection) core.setRange(firstCon.container || firstCon, firstCon.startOffset || 0, a, offset);
-                    else if(a.nodeType === 1 && a.lastChild) {
-                        core.setRange(a.lastChild, a.lastChild.textContent.length, a.lastChild, a.lastChild.textContent.length);
+                    else if(a.nodeType === 1 && a.nextSibling) {
+                        //core.setRange(a.lastChild, a.lastChild.textContent.length+1, a.lastChild, a.lastChild.textContent.length+1);
+                        core.setRange(a.nextSibling, a.nextSibling.length, a.nextSibling, a.nextSibling.length);
                     }
                     else core.setRange(a, offset, a, offset);
                 } catch (error) {
