@@ -7874,7 +7874,7 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
 
                 selectionNode.appendChild(oFormatTag);
                 core.setRange(oFormatTag, 0, oFormatTag, 0);
-                event._applyTagEffects();
+                event._applyTagEffects(); 
 
                 core.history.push(false);
                 return;
