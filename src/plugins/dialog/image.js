@@ -29,6 +29,7 @@ export default {
             sizeUnit: options._imageSizeUnit,
             _linkElement: '',
             _altText: '',
+            _optimize: true,
             _align: 'none',
             _floatClassRegExp: '__se__float\\-[a-z]+',
             _v_src: {_linkValue: ''},
@@ -71,6 +72,7 @@ export default {
         contextImage.imgUrlFile = image_dialog.querySelector('._se_image_url');
         contextImage.focusElement = contextImage.imgInputFile || contextImage.imgUrlFile;
         contextImage.altText = image_dialog.querySelector('._se_image_alt');
+        contextImage.optimize = image_dialog.querySelector('._se_image_check_optimize');
         contextImage.captionCheckEl = image_dialog.querySelector('._se_image_check_caption');
         contextImage.previewSrc = image_dialog.querySelector('._se_tab_content_image .se-link-preview');
 
@@ -197,6 +199,7 @@ export default {
             html += '' +
                         '<div class="se-dialog-form se-dialog-form-footer">' +
                             '<label><input type="checkbox" class="se-dialog-btn-check _se_image_check_caption" />&nbsp;' + lang.dialogBox.caption + '</label>' +
+                            '<label><input type="checkbox" checked class="se-dialog-btn-check _se_image_check_optimize" />&nbsp;이미지 최적화</label>' +
                         '</div>' +
                     '</div>' +
                 '</div>' +
@@ -366,6 +369,7 @@ export default {
         e.stopPropagation();
 
         contextImage._altText = contextImage.altText.value;
+        contextImage._optimize = contextImage.optimize.checked;
         contextImage._align = contextImage.modal.querySelector('input[name="suneditor_image_radio"]:checked').value;
         contextImage._captionChecked = contextImage.captionCheckEl.checked;
         if (contextImage._resizing) contextImage._proportionChecked = contextImage.proportion.checked;
@@ -480,9 +484,13 @@ export default {
         // server upload
         if (typeof imageUploadUrl === 'string' && imageUploadUrl.length > 0) {
             const formData = new FormData();
+            const contextImage = this.context.image;
             for (let i = 0; i < filesLen; i++) {
                 formData.append('file-' + i, files[i]);
             }
+
+            formData.append('optimize', contextImage._optimize);
+
             this.plugins.fileManager.upload.call(this, imageUploadUrl, this.options.imageUploadHeader, formData, this.plugins.image.callBack_imgUpload.bind(this, info), this.functions.onImageUploadError);
         } else { // base64
             this.plugins.image.setup_reader.call(this, files, info.anchor, info.inputWidth, info.inputHeight, info.align, info.alt, filesLen, info.isUpdate);
@@ -1119,6 +1127,7 @@ export default {
         }
 
         contextImage.altText.value = '';
+        contextImage.optimize.checked = true;
         contextImage.modal.querySelector('input[name="suneditor_image_radio"][value="none"]').checked = true;
         contextImage.captionCheckEl.checked = false;
         contextImage._element = null;
