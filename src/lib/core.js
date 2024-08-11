@@ -1761,6 +1761,7 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                 return null;
             }
 
+            let fNode = null;
             let range = this.getRange();
             let line = util.isListCell(range.commonAncestorContainer) ? range.commonAncestorContainer : util.getFormatElement(this.getSelectionNode(), null);
             let insertListCell = util.isListCell(line) && (util.isListCell(oNode) || util.isList(oNode));
@@ -1963,9 +1964,10 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                     }
 
                     if (util.isWysiwygDiv(parentNode) && (oNode.nodeType === 3 || util.isBreak(oNode))) {
-                        const fNode = util.createElement(options.defaultTag);
-                        fNode.appendChild(oNode);
-                        oNode = fNode;
+                        const fomatNode = util.createElement(options.defaultTag);
+                        fomatNode.appendChild(oNode);
+                        fNode = oNode;
+                        oNode = fomatNode;
                     }
                 }
 
@@ -2023,6 +2025,8 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                 parentNode.appendChild(oNode);
                 console.warn('[SUNEDITOR.insertNode.warn] ' + error);
             } finally {
+                if (fNode) oNode = fNode;
+
                 const dupleNodes = parentNode.querySelectorAll('[data-se-duple]');
                 if (dupleNodes.length > 0) {
                     for (let i = 0, len = dupleNodes.length, d, c, ch, parent; i < len; i++) {
@@ -2054,30 +2058,8 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                 if (!util.isComponent(oNode)) {
                     let offset = 1;
                     if (oNode.nodeType === 3) {
-                        const previous = oNode.previousSibling;
-                        const next = oNode.nextSibling;
-                        const previousText = (!previous ||  previous.nodeType === 1 || util.onlyZeroWidthSpace(previous)) ? '' : previous.textContent;
-                        const nextText = (!next || next.nodeType === 1 || util.onlyZeroWidthSpace(next)) ? '' : next.textContent;
-
-                        if (previous && previousText.length > 0) {
-                            oNode.textContent = previousText + oNode.textContent;
-                            util.removeItem(previous);
-                        }
-
-                        if (next && next.length > 0) {
-                            oNode.textContent += nextText;
-                            util.removeItem(next);
-                        }
-
-                        const newRange = {
-                            container: oNode,
-                            startOffset: previousText.length,
-                            endOffset: oNode.textContent.length - nextText.length
-                        };
-
-                        this.setRange(oNode, newRange.startOffset, oNode, newRange.endOffset);
-
-                        return newRange;
+                        offset = oNode.textContent.length;
+                        this.setRange(oNode, offset, oNode, offset);
                     } else if (!util.isBreak(oNode) && !util.isListCell(oNode) && util.isFormatElement(parentNode)) {
                         let zeroWidth = null;
                         if (!oNode.previousSibling || util.isBreak(oNode.previousSibling)) {
@@ -2098,9 +2080,6 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
 
                     this.setRange(oNode, offset, oNode, offset);
                 }
-
-                // history stack
-                this.history.push(true);
 
                 return oNode;
             }
@@ -5325,7 +5304,7 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                         r = style[i].match(/([a-zA-Z0-9-]+)(:)([^"']+)/);
                         if (r && !/inherit|initial|revert|unset/i.test(r[3])) {
                             const k = util.kebabToCamelCase(r[1].trim());
-                            const v = this.wwComputedStyle[k] ? this.wwComputedStyle[k].replace.(/"/g, '') : '';
+                            const v = this.wwComputedStyle[k] ? this.wwComputedStyle[k].replace(/"/g, '') : '';
                             const c = r[3].trim();
                             switch (k) {
                                 case 'fontFamily':
