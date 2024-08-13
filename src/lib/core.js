@@ -6338,6 +6338,11 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                 _stickyDummy: contextEl._stickyDummy,
                 _arrow: contextEl._arrow
             };
+        },
+
+        isMarkdownMode: false,
+        setMarkdownMode: function(isOn) {
+            this.isMarkdownMode = isOn;
         }
     };
 
@@ -7569,12 +7574,12 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                         // set format attrs - edge
                         if (range.collapsed && (formatStartEdge || formatEndEdge)) {
                             event._enterPrevent(e);
-                            if(mdConverter) {
+                            if(mdConverter && core.isMarkdownMode) {
                                 formatEl.innerHTML = mdConverter.makeHtml(formatEl.innerHTML).replace(/<\/?p[^>]*>/g, '');
                             }
-                            // if(anchorme) {
-                            //     formatEl.innerHTML = anchorme({input: formatEl.innerHTML, options: { attributes: { target: "_blank"}}});
-                            // }
+                            if(anchorme && !core.isMarkdownMode) {
+                                formatEl.innerHTML = anchorme({input: formatEl.innerHTML, options: { attributes: { target: "_blank"}}});
+                            }
                             
                             // if (formatEndEdge) {
                             // core.setRange(formatEl, 1, formatEl, 1);
