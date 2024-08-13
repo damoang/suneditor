@@ -8287,7 +8287,14 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                 }
                 cleanData = core.cleanHTML(cleanData, core.pasteTagsWhitelistRegExp, core.pasteTagsBlacklistRegExp);
             } else {
-                cleanData = util._HTMLConvertor(plainText).replace(/\n/g, '<br>');
+                cleanData = util._HTMLConvertor(plainText)//.replace(/\n/g, '<br>');
+                let cleanDataArray = cleanData.split('\n');
+                cleanData = '';
+                cleanDataArray.forEach(line => {
+                    if(line == "") cleanData += '<' + options.defaultTag + '><br></' + options.defaultTag + '>';
+                    else cleanData += '<' + options.defaultTag + '>' + line + '</' + options.defaultTag + '>'
+                });
+                cleanData = core.cleanHTML(cleanData, core.pasteTagsWhitelistRegExp, core.pasteTagsBlacklistRegExp);
             }
 
             const maxCharCount = core._charCount(core._charTypeHTML ? cleanData : plainText);
