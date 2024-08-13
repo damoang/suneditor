@@ -179,14 +179,14 @@
                 '</button>' +
                 '</div>' +
                 '<div class="se-btn-group" style="padding-top: 0;">' +
-                '<button type="button" data-command="mirror" data-value="h" class="se-btn se-tooltip">' +
-                icons.mirror_horizontal +
-                '<span class="se-tooltip-inner"><span class="se-tooltip-text">' + lang.controller.mirrorHorizontal + '</span></span>' +
-                '</button>' +
-                '<button type="button" data-command="mirror" data-value="v" class="se-btn se-tooltip">' +
-                icons.mirror_vertical +
-                '<span class="se-tooltip-inner"><span class="se-tooltip-text">' + lang.controller.mirrorVertical + '</span></span>' +
-                '</button>' +
+                // '<button type="button" data-command="mirror" data-value="h" class="se-btn se-tooltip">' +
+                // icons.mirror_horizontal +
+                // '<span class="se-tooltip-inner"><span class="se-tooltip-text">' + lang.controller.mirrorHorizontal + '</span></span>' +
+                // '</button>' +
+                // '<button type="button" data-command="mirror" data-value="v" class="se-btn se-tooltip">' +
+                // icons.mirror_vertical +
+                // '<span class="se-tooltip-inner"><span class="se-tooltip-text">' + lang.controller.mirrorVertical + '</span></span>' +
+                // '</button>' +
                 '<button type="button" data-command="onalign" class="se-btn se-tooltip _se_resizing_align_button">' +
                 icons.align_justify +
                 '<span class="se-tooltip-inner"><span class="se-tooltip-text">' + lang.toolbar.align + '</span></span>' +
