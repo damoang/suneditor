@@ -8288,7 +8288,7 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
                 cleanData = core.cleanHTML(cleanData, core.pasteTagsWhitelistRegExp, core.pasteTagsBlacklistRegExp);
             } else {
                 cleanData = util._HTMLConvertor(plainText)//.replace(/\n/g, '<br>');
-                let cleanDataArray = cleanData.split('\n');
+                let cleanDataArray = cleanData.split(/\r\n|\r|\n/);
                 cleanData = '';
                 cleanDataArray.forEach(line => {
                     if(line == "") cleanData += '<' + options.defaultTag + '><br></' + options.defaultTag + '>';
