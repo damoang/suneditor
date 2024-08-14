@@ -401,30 +401,40 @@ export default {
 
         let fileSize = 0;
         let files = [];
+        const limitSize = this.options.imageUploadSizeLimit;
         for (let i = 0, len = fileList.length; i < len; i++) {
             if (/image/i.test(fileList[i].type)) {
                 files.push(fileList[i]);
+
+                if (fileList[i].size > limitSize) {
+                    this.closeLoading();
+                    const err = fileList[i].name + ' 파일의 용량이 서버에 설정(' + (limitSize/1024/1024) + 'MB)된 값보다 크므로 업로드 할 수 없습니다.';
+                    if (typeof this.functions.onImageUploadError !== 'function' || this.functions.onImageUploadError(err, { 'limitSize': limitSize, 'currentSize': infoSize, 'uploadSize': fileSize }, this)) {
+                        this.functions.noticeOpen(err);
+                    }
+                    return;
+                }
                 fileSize += fileList[i].size;
             }
         }
 
-        const limitSize = this.options.imageUploadSizeLimit;
-        if (limitSize > 0) {
-            let infoSize = 0;
-            const imagesInfo = this.context.image._infoList;
-            for (let i = 0, len = imagesInfo.length; i < len; i++) {
-                infoSize += imagesInfo[i].size * 1;
-            }
+        // const limitSize = this.options.imageUploadSizeLimit;
+        // if (limitSize > 0) {
+        //     let infoSize = 0;
+        //     const imagesInfo = this.context.image._infoList;
+        //     for (let i = 0, len = imagesInfo.length; i < len; i++) {
+        //         infoSize += imagesInfo[i].size * 1;
+        //     }
 
-            if ((fileSize + infoSize) > limitSize) {
-                this.closeLoading();
-                const err = '[SUNEDITOR.imageUpload.fail] Size of uploadable total images: ' + (limitSize/1000) + 'KB';
-                if (typeof this.functions.onImageUploadError !== 'function' || this.functions.onImageUploadError(err, { 'limitSize': limitSize, 'currentSize': infoSize, 'uploadSize': fileSize }, this)) {
-                    this.functions.noticeOpen(err);
-                }
-                return;
-            }
-        }
+        //     if ((fileSize + infoSize) > limitSize) {
+        //         this.closeLoading();
+        //         const err = '[SUNEDITOR.imageUpload.fail] Size of uploadable total images: ' + (limitSize/1000) + 'KB';
+        //         if (typeof this.functions.onImageUploadError !== 'function' || this.functions.onImageUploadError(err, { 'limitSize': limitSize, 'currentSize': infoSize, 'uploadSize': fileSize }, this)) {
+        //             this.functions.noticeOpen(err);
+        //         }
+        //         return;
+        //     }
+        // }
 
         const contextImage = this.context.image;
         contextImage._uploadFileLength = files.length;
