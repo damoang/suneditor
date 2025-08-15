@@ -3,6 +3,10 @@ Vanilla javascript based WYSIWYG web editor, with no dependencies.
 SunEditor supports IE11 and all modern browsers with no dependencies and polyfill.
 Coded based on ES5 in supported by IE11.
 
+> **⚠️ SunEditor 3.0.0 Released!**  
+> The latest version **3.x** is now available with major improvements.  
+> If you're using **2.x (legacy version)**, see [v2-legacy branch](https://github.com/JiHong88/SunEditor/tree/v2-legacy).
+
 #### Demo : <a href="http://suneditor.com" target="_blank">suneditor.com</a>
 
 [![GitHub](https://img.shields.io/github/license/jihong88/suneditor.svg?style=flat-square)](https://github.com/JiHong88/SunEditor/blob/master/LICENSE.txt)
@@ -42,6 +46,7 @@ Coded based on ES5 in supported by IE11.
 - [Custom plugins](#custom-plugins)
 - [Document](#document)
 - [Other libraries using SunEditor](#other-libraries-using-sunEditor)
+    - [plugin: suneditor-emojis](#lib-suneditor-emojis)
     - [suneditor-react](#lib-suneditor-react)
     - [angular-suneditor](#lib-angular-suneditor)
     - [Using SunEditor with Livewire & Alpine.JS](#lib-livewire-alpine)
@@ -392,6 +397,7 @@ plugins: [
 
 // Values
 strictMode      : Option to disable clean mode, which checks the styles, classes, etc. of the editor content.   default : false {Boolean}
+strictHTMLValidation : Enforces strict HTML validation based on the editor`s policy. Applies to methods like setContents to ensure content compliance when enabled. default: true {Boolean}
 lang            : language object.   default : en {Object}
 defaultTag      : Specifies default tag name of the editor.     default: 'p' {String}
 textTags        : You can change the tag of the default text button.   default: { bold: 'STRONG', underline: 'U', italic: 'EM', strike: 'DEL' }
@@ -692,6 +698,16 @@ imageMultipleFile: If true, multiple images can be selected.    default: false {
 imageAccept      : Define the "accept" attribute of the input.  default: "*" {String}
                    ex) "*" or ".jpg, .png .."
 // Image - image gallery
+imageGalleryData    : Direct JSON data without making server requests.  default: null {Array}
+                          ex) [
+                                {
+                                    "src": "/download/editorImg/test_image.jpg", // @Require
+                                    "thumbnail": "/download/editorImg/test_thumbnail.jpg", // @Option - Thumbnail image to be displayed in the image gallery.
+                                    "name": "Test image", // @Option - default: src.split('/').pop()
+                                    "alt": "Alt text", // @Option - default: src.split('/').pop()
+                                    "tag": "Tag name" // @Option
+                                }
+                            ]
 imageGalleryUrl     : The url of the image gallery, if you use the image gallery.
                       When "imageUrlInput" is true, an image gallery button is created in the image modal.
                       You can also use it by adding "imageGallery" to the button list.   default: null {String}
@@ -1588,6 +1604,8 @@ editor.showController = function (name, controllers, core) {
 [Document](http://suneditor.com/sample/html/document.html)
 
 ## Other libraries using SunEditor
+<a id="lib-suneditor-emojis"></a>[suneditor-emojis](https://github.com/davidkonrad/suneditor-emojis) ([@davidkonrad](https://suneditor-emojis.github.io/)) - Emojis plugin for SunEditor.
+
 <a id="lib-suneditor-react"></a>[suneditor-react](https://github.com/mkhstar/suneditor-react) ([@mkhstar](https://github.com/mkhstar)) - Pure React Component for SunEditor.
 
 <a id="lib-angular-suneditor"></a>[angular-suneditor](https://github.com/BauViso/angular-suneditor) ([@BauViso](https://github.com/BauViso)) - Angular module for the SunEditor WYSIWYG Editor.
@@ -1597,6 +1615,11 @@ editor.showController = function (name, controllers, core) {
 <a id="lib-pluxml"></a>[Plugin for Pluxml](https://forum.pluxml.org/discussion/comment/59339) ([@sudwebdesign](https://github.com/sudwebdesign)) - Plugin for Pluxml.
 
 <a id="lib-aem-suneditor"></a>[AEM-SunEditor](https://blogs.perficientdigital.com/2019/08/13/suneditor-an-alternative-to-the-aem-rte) ([@ahmed-musallam](https://github.com/ahmed-musallam/AEM-SunEditor)) - Enables using SunEditor in AEM dialogs as an RTE replacement.
+
+## ✨ Contributors
+<a href="https://github.com/jihong88/suneditor/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=jihong88/suneditor" alt="contributors"/>
+</a>
     
 ## License
 Suneditor may be freely distributed under the MIT license.

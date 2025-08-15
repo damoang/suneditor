@@ -1,7 +1,7 @@
 {
   "name": "suneditor",
-  "version": "2.47.0",
-  "description": "Vanilla javascript based WYSIWYG web editor, with no dependencies",
+  "version": "2.47.6",
+  "description": "Vanilla JavaScript WYSIWYG web editor (2.x legacy version, actively maintained)",
   "author": "JiHong.Lee",
   "license": "MIT",
   "main": "src/suneditor.js",
@@ -9,9 +9,9 @@
     "./src/assets/css/*.css"
   ],
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.dev.js",
-    "start": "npm run dev",
-    "build": "webpack --config webpack.prod.js",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --config webpack.dev.js",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider npm run dev",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --config webpack.prod.js",
     "lint": "jshint src",
     "test": "karma start"
   },
@@ -45,7 +45,7 @@
     "karma": "~6.3.19",
     "karma-chrome-launcher": "~2.2.0",
     "karma-jasmine": "~1.1.2",
-    "katex": "~0.16.10",
+    "katex": "^0.16.21",
     "mini-css-extract-plugin": "~0.4.5",
     "optimize-css-assets-webpack-plugin": "~5.0.4",
     "url-loader": "~1.1.2",

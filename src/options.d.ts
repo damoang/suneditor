@@ -4,6 +4,14 @@ import { Plugin } from './plugins/Plugin';
 export interface SunEditorOptions {
     plugins?: Plugin[] | Record<string, Plugin>;
     /**
+     * Option to disable clean mode, which checks the styles, classes, etc. of the editor content
+     */
+    strictMode?: boolean;
+    /**
+     * Enforces strict HTML validation based on the editor`s policy. Applies to methods like setContents to ensure content compliance when enabled.
+     */
+    strictHTMLValidation?: boolean;
+    /**
      * Values
      * ======
      */
@@ -356,6 +364,10 @@ export interface SunEditorOptions {
      * =====
      */
     /**
+     * Direct JSON data without making server requests.
+     */
+    imageGalleryData?: Array<any>;
+    /**
      * The url of the image gallery, if you use the image gallery
      */
     imageGalleryUrl?: string;
@@ -587,7 +599,8 @@ export interface SunEditorOptions {
     /**
      * private options
      */
-    _printClass?: string;
+  _printClass?: string;
+  __allowedScriptTags?: boolean;
   }
   export type FormatTagName =
   'p'
