@@ -9,9 +9,9 @@
     "./src/assets/css/*.css"
   ],
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.dev.js",
-    "start": "npm run dev",
-    "build": "webpack --config webpack.prod.js",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --config webpack.dev.js",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider npm run dev",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --config webpack.prod.js",
     "lint": "jshint src",
     "test": "karma start"
   },
