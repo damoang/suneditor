@@ -28,7 +28,7 @@ const util = {
         this.isOSX_IOS = /(Mac|iPhone|iPod|iPad)/.test(navigator.platform);
         this.isChromium = !!window.chrome;
         this.isResizeObserverSupported = (typeof ResizeObserver === 'function');
-        this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+        this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ((navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) && 'ontouchstart' in window);
     },
 
     _allowedEmptyNodeList: '.se-component, pre, blockquote, hr, li, table, img, iframe, video, audio, canvas',
@@ -1610,6 +1610,7 @@ const util = {
                 child = children[i];
                 next = children[i + 1];
                 if (!child) break;
+                if (inst.isBreak(child) || inst.isMedia(child) || inst.isInputElement(child)) continue;
                 if((onlyText && inst._isIgnoreNodeChange(child)) || (!onlyText && (inst.isTable(child) || inst.isListCell(child) || (inst.isFormatElement(child) && !inst.isFreeFormatElement(child))))) {
                     if (inst.isTable(child) || inst.isListCell(child)) {
                         recursionFunc(child, depth + 1, i);
@@ -1646,6 +1647,7 @@ const util = {
                     current.parentNode.insertBefore(child, current);
                     inst.removeItem(current);
                 }
+
                 if (!next) {
                     if (child.nodeType === 1) recursionFunc(child, depth + 1, i);
                     break;
@@ -1813,7 +1815,7 @@ const util = {
      * @returns {string} HTML string
      */
     htmlCompress: function (html) {
-        return html.replace(/\n/g, '').replace(/(>)(?:\s+)(<)/g, '$1$2');
+        return html.replace(/\n/g, '').replace(/>\s+</g, '> <');
     },
 
     /**
@@ -1931,9 +1933,10 @@ const util = {
      * @param {RegExp} htmlCheckWhitelistRegExp Editor tags whitelist (core._htmlCheckWhitelistRegExp)
      * @param {RegExp} htmlCheckBlacklistRegExp Editor tags blacklist (core._htmlCheckBlacklistRegExp)
      * @param {Function} classNameFilter Class name filter function
+     * @param {Function} strictHTMLValidation Enforces strict HTML validation based on the editor`s policy
      * @private
      */
-    _consistencyCheckOfHTML: function (documentFragment, htmlCheckWhitelistRegExp, htmlCheckBlacklistRegExp, classNameFilter) {
+    _consistencyCheckOfHTML: function (documentFragment, htmlCheckWhitelistRegExp, htmlCheckBlacklistRegExp, classNameFilter, strictHTMLValidation) {
         /**
          * It is can use ".children(util.getListChildren)" to exclude text nodes, but "documentFragment.children" is not supported in IE.
          * So check the node type and exclude the text no (current.nodeType !== 1)
@@ -1982,7 +1985,7 @@ const util = {
                 else current.removeAttribute('class');
             }
 
-            const result = current.parentNode !== documentFragment && nrtag &&
+            const result = strictHTMLValidation && current.parentNode !== documentFragment && nrtag &&
                 ((this.isListCell(current) && !this.isList(current.parentNode)) ||
                     ((this.isFormatElement(current) || this.isComponent(current)) && !this.isRangeFormatElement(current.parentNode) && !this.getParentElement(current, this.isComponent)));
 
